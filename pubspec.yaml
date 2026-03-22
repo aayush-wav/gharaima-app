@@ -1,11 +1,11 @@
-name: hamro_sewa
+name: gharaima_app
 description: A Flutter mobile application for a home services marketplace in Nepal.
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.0 <4.0.0'
+  sdk: ">=3.2.0 <4.0.0"
 
 dependencies:
   flutter:
