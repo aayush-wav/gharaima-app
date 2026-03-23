@@ -39,7 +39,8 @@ class App extends ConsumerWidget {
         }
 
         final session = Supabase.instance.client.auth.currentSession;
-        final loggedIn = session != null;
+        final guestMode = ref.watch(guestModeProvider);
+        final loggedIn = session != null || guestMode;
         final isLoggingIn = state.matchedLocation.startsWith('/auth');
 
         if (!loggedIn && !isLoggingIn) return '/auth/phone';

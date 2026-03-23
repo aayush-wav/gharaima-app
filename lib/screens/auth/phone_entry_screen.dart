@@ -117,7 +117,10 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
                 
                 // Demo Option
                 TextButton(
-                  onPressed: () => context.go('/home'),
+                  onPressed: () {
+                    ref.read(guestModeProvider.notifier).state = true;
+                    context.go('/home');
+                  },
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

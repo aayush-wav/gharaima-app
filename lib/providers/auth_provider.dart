@@ -18,3 +18,5 @@ final currentUserProvider = Provider<User?>((ref) {
   final authState = ref.watch(authStateProvider).value;
   return authState?.session?.user;
 });
+
+final guestModeProvider = StateProvider<bool>((ref) => false);
