@@ -33,64 +33,135 @@ class ProfileScreen extends ConsumerWidget {
     final userProfile = ref.watch(userProfileProvider).value;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppTheme.p24),
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                const CircleAvatar(
-                  radius: 50,
-                  backgroundColor: AppTheme.surface,
-                  child: Icon(Icons.person, size: 50, color: AppTheme.textSecondary),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: CircleAvatar(
-                    radius: 18,
-                    backgroundColor: AppTheme.primary,
-                    child: IconButton(
-                      icon: const Icon(Icons.edit, size: 16, color: Colors.white),
-                      onPressed: () => context.push('/profile/edit'),
-                    ),
+      backgroundColor: AppTheme.background,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 220,
+            floating: false,
+            pinned: true,
+            backgroundColor: AppTheme.primary,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppTheme.primary, AppTheme.accent],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                 ),
-              ],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 48),
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                      child: const CircleAvatar(
+                        radius: 44,
+                        backgroundColor: AppTheme.primaryLight,
+                        child: Icon(Icons.person_rounded, size: 40, color: AppTheme.primary),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      userProfile?.fullName ?? 'Service Explorer',
+                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: -0.5),
+                    ),
+                    Text(
+                      userProfile?.phone ?? 'Nepal',
+                      style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 13, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 16),
-            Text(userProfile?.fullName ?? 'No Name', style: AppTheme.textTheme.displayMedium),
-            Text(userProfile?.phone ?? '', style: AppTheme.textTheme.bodyLarge?.copyWith(color: AppTheme.textSecondary)),
-            const SizedBox(height: 32),
-            
-            _buildMenuItem(context, Icons.event_note, 'My Bookings', () => context.go('/bookings')),
-            _buildMenuItem(context, Icons.help_outline, 'Help & Support', () => _showComingSoon(context)),
-            _buildMenuItem(context, Icons.info_outline, 'About', () => _showComingSoon(context, title: 'HamroSewa v1.0.0')),
-            const Divider(),
-            _buildMenuItem(context, Icons.logout, 'Logout', () => _logout(context, ref), isDestructive: true),
-          ],
-        ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(AppTheme.p24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionTitle('Account Management'),
+                  const SizedBox(height: 12),
+                  _buildProfileCard([
+                    _buildMenuRow(Icons.person_outline_rounded, 'Edit Profile', () => context.push('/profile/edit')),
+                    _buildMenuRow(Icons.location_on_outlined, 'Saved Addresses', () {}),
+                    _buildMenuRow(Icons.payment_rounded, 'Payment Methods', () {}),
+                  ]),
+                  
+                  const SizedBox(height: 28),
+                  _buildSectionTitle('Engagement'),
+                  const SizedBox(height: 12),
+                  _buildProfileCard([
+                    _buildMenuRow(Icons.star_outline_rounded, 'Reviews & Ratings', () {}),
+                    _buildMenuRow(Icons.share_outlined, 'Invite Friends', () {}),
+                    _buildMenuRow(Icons.help_outline_rounded, 'Support Center', () {}),
+                  ]),
+                  
+                  const SizedBox(height: 40),
+                  Container(
+                    width: double.infinity,
+                    child: TextButton(
+                      onPressed: () => _logout(context, ref),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        foregroundColor: AppTheme.error,
+                        backgroundColor: AppTheme.error.withOpacity(0.05),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                      child: const Text('Sign Out Securely', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Center(
+                    child: Text('Version 2.4.0 (Gold)', style: AppTheme.textTheme.bodySmall),
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildMenuItem(BuildContext context, IconData icon, String label, VoidCallback onTap, {bool isDestructive = false}) {
-    return ListTile(
-      leading: Icon(icon, color: isDestructive ? AppTheme.primary : AppTheme.textPrimary),
-      title: Text(label, style: TextStyle(color: isDestructive ? AppTheme.primary : AppTheme.textPrimary, fontWeight: FontWeight.w500)),
-      trailing: const Icon(Icons.chevron_right, size: 20, color: AppTheme.textSecondary),
-      onTap: onTap,
+  Widget _buildSectionTitle(String title) {
+    return Text(title.toUpperCase(), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: AppTheme.textMuted, letterSpacing: 1.5));
+  }
+
+  Widget _buildProfileCard(List<Widget> children) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: AppTheme.border, width: 1.5),
+        boxShadow: const [AppTheme.softShadow],
+      ),
+      child: Column(children: children),
     );
   }
 
-  void _showComingSoon(BuildContext context, {String title = 'Coming Soon'}) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: const Text('This feature is currently in development.'),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+  Widget _buildMenuRow(IconData icon, String label, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(color: AppTheme.background, borderRadius: BorderRadius.circular(12)),
+              child: Icon(icon, size: 20, color: AppTheme.textPrimary),
+            ),
+            const SizedBox(width: 16),
+            Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppTheme.textPrimary)),
+            const Spacer(),
+            const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.textMuted),
+          ],
+        ),
       ),
     );
   }

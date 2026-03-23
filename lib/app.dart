@@ -20,6 +20,8 @@ import 'screens/profile/profile_screen.dart';
 import 'screens/profile/edit_profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'screens/offers/offers_screen.dart';
+
 class App extends ConsumerWidget {
   const App({super.key});
 
@@ -73,17 +75,29 @@ class App extends ConsumerWidget {
           builder: (context, state, navigationShell) {
             return Scaffold(
               body: navigationShell,
-              bottomNavigationBar: BottomNavigationBar(
-                currentIndex: navigationShell.currentIndex,
-                onTap: (index) => navigationShell.goBranch(index),
-                type: BottomNavigationBarType.fixed,
-                selectedItemColor: AppTheme.primary,
-                unselectedItemColor: AppTheme.textSecondary,
-                items: const [
-                  BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                  BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Bookings'),
-                  BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-                ],
+              bottomNavigationBar: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(top: BorderSide(color: AppTheme.border, width: 0.5)),
+                  boxShadow: const [AppTheme.softShadow],
+                ),
+                child: BottomNavigationBar(
+                  currentIndex: navigationShell.currentIndex,
+                  onTap: (index) => navigationShell.goBranch(index),
+                  type: BottomNavigationBarType.fixed,
+                  selectedItemColor: AppTheme.primary,
+                  unselectedItemColor: AppTheme.textMuted,
+                  selectedLabelStyle: AppTheme.textTheme.bodySmall?.copyWith(color: AppTheme.primary, fontWeight: FontWeight.bold),
+                  unselectedLabelStyle: AppTheme.textTheme.bodySmall,
+                  showSelectedLabels: true,
+                  showUnselectedLabels: true,
+                  items: const [
+                    BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
+                    BottomNavigationBarItem(icon: Icon(Icons.flash_on_rounded), label: 'Offers'),
+                    BottomNavigationBarItem(icon: Icon(Icons.receipt_long_rounded), label: 'Activity'),
+                    BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Profile'),
+                  ],
+                ),
               ),
             );
           },
@@ -117,6 +131,14 @@ class App extends ConsumerWidget {
                       builder: (context, state) => const BookingConfirmationScreen(),
                     ),
                   ],
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/offers',
+                  builder: (context, state) => const OffersScreen(),
                 ),
               ],
             ),

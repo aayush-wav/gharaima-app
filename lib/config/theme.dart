@@ -2,66 +2,68 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // --- Sophisticated Color Palette ---
-  static const Color primary = Color(0xFF2563EB); // Royal Blue
-  static const Color primaryDark = Color(0xFF1E40AF);
-  static const Color accent = Color(0xFF7C3AED); // Soft Violet
+  // --- Sexy & Sophisticated Pastel Palette ---
+  static const Color primary = Color(0xFF6366F1); // Indigo
+  static const Color primaryLight = Color(0xFFEEF2FF);
+  static const Color accent = Color(0xFFC084FC); // Soft Purple
   
-  static const Color background = Color(0xFFF9FAFB);
+  static const Color background = Color(0xFFFAFBFF); // Porcelain Blue
   static const Color surface = Color(0xFFFFFFFF);
-  static const Color surfaceElevated = Color(0xFFFFFFFF);
   
-  static const Color textPrimary = Color(0xFF0F172A); // Slate 900
-  static const Color textSecondary = Color(0xFF475569); // Slate 600
-  static const Color textMuted = Color(0xFF94A3B8); // Slate 400
+  static const Color textPrimary = Color(0xFF1E293B); // Dark Slate
+  static const Color textSecondary = Color(0xFF64748B); // Muted Slate
+  static const Color textMuted = Color(0xFF94A3B8);
   
-  static const Color success = Color(0xFF10B981);
-  static const Color warning = Color(0xFFF59E0B);
-  static const Color error = Color(0xFFEF4444);
-  static const Color border = Color(0xFFE2E8F0); // Slate 200
+  static const Color success = Color(0xFF2DD4BF); // Teal Pastel
+  static const Color warning = Color(0xFFFBBF24); // Amber Pastel
+  static const Color error = Color(0xFFF87171); // Rose Pastel
+  static const Color border = Color(0xFFF1F5F9); 
 
   // --- Premium Typography (Plus Jakarta Sans) ---
   static final TextTheme textTheme = TextTheme(
     displayLarge: GoogleFonts.plusJakartaSans(
-      fontSize: 28,
-      fontWeight: FontWeight.w800,
+      fontSize: 32,
+      fontWeight: FontWeight.w900,
       color: textPrimary,
-      letterSpacing: -0.5,
+      letterSpacing: -1.2,
     ),
     displayMedium: GoogleFonts.plusJakartaSans(
-      fontSize: 22,
-      fontWeight: FontWeight.w700,
+      fontSize: 24,
+      fontWeight: FontWeight.w800,
       color: textPrimary,
-      letterSpacing: -0.3,
+      letterSpacing: -0.8,
     ),
     displaySmall: GoogleFonts.plusJakartaSans(
       fontSize: 18,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w800,
       color: textPrimary,
     ),
     headlineMedium: GoogleFonts.plusJakartaSans(
       fontSize: 16,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w700,
       color: textPrimary,
     ),
     bodyLarge: GoogleFonts.plusJakartaSans(
       fontSize: 15,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.w600,
       color: textPrimary,
+      height: 1.5,
     ),
     bodyMedium: GoogleFonts.plusJakartaSans(
       fontSize: 14,
       fontWeight: FontWeight.w500,
       color: textSecondary,
+      height: 1.5,
     ),
     bodySmall: GoogleFonts.plusJakartaSans(
       fontSize: 12,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.w600,
       color: textMuted,
+      letterSpacing: 0.2,
     ),
     labelLarge: GoogleFonts.plusJakartaSans(
       fontSize: 14,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w700,
       color: textPrimary,
     ),
   );
@@ -100,8 +102,8 @@ class AppTheme {
         elevation: 0,
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: border, width: 1),
+          borderRadius: BorderRadius.circular(28),
+          side: BorderSide(color: border.withOpacity(0.5), width: 1.5),
         ),
       ),
       
@@ -109,53 +111,54 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 56),
+          minimumSize: const Size(double.infinity, 58),
           elevation: 0,
-          shadowColor: primary.withOpacity(0.3),
+          shadowColor: primary.withOpacity(0.4),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
           textStyle: textTheme.labelLarge?.copyWith(
             fontSize: 16,
             color: Colors.white,
+            letterSpacing: 0.5,
           ),
         ),
       ),
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: border),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: border),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: border, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           borderSide: const BorderSide(color: primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: error),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(color: error, width: 1.5),
         ),
         hintStyle: textTheme.bodyMedium?.copyWith(color: textMuted),
-        labelStyle: textTheme.bodyMedium?.copyWith(color: textSecondary),
+        labelStyle: textTheme.bodyMedium?.copyWith(color: textSecondary, fontWeight: FontWeight.w600),
       ),
       
-      chipTheme: ChipThemeData(
-        backgroundColor: background,
-        selectedColor: primary.withOpacity(0.1),
-        labelStyle: textTheme.bodyMedium,
-        secondaryLabelStyle: textTheme.bodyMedium?.copyWith(color: primary),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+      tabBarTheme: TabBarThemeData(
+        labelColor: primary,
+        unselectedLabelColor: textMuted,
+        labelStyle: textTheme.labelLarge,
+        unselectedLabelStyle: textTheme.labelLarge,
+        indicatorSize: TabBarIndicatorSize.label,
+        indicator: UnderlineTabIndicator(
+          borderSide: BorderSide(color: primary, width: 3),
+          borderRadius: BorderRadius.circular(2),
         ),
-        side: const BorderSide(color: border),
       ),
       
       dividerTheme: const DividerThemeData(
@@ -176,14 +179,14 @@ class AppTheme {
   static const double p32 = 32.0;
   
   static const BoxShadow softShadow = BoxShadow(
-    color: Color(0x0A000000),
-    blurRadius: 20,
-    offset: Offset(0, 4),
+    color: Color(0x08000000),
+    blurRadius: 30,
+    offset: Offset(0, 10),
   );
 
   static const BoxShadow accentShadow = BoxShadow(
-    color: Color(0x1A2563EB),
-    blurRadius: 15,
-    offset: Offset(0, 8),
+    color: Color(0x206366F1), // Luminous Indigo Shadow
+    blurRadius: 25,
+    offset: Offset(0, 12),
   );
 }

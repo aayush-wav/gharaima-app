@@ -1,8 +1,8 @@
 class AppConfig {
-  static const String appName = "HamroSewa"; // Change this here to swap app name globally
+  static const String appName = "Gharaima App";
   
   // Supabase Configuration
-  // Fill these in from your Supabase project dashboard
-  static const String supabaseUrl = ""; 
-  static const String supabaseAnonKey = "";
+  // ENTER YOUR SUPABASE PROJECT KEYS BELOW - Find these in your dashboard at: Settings > API
+  static const String supabaseUrl = ""; // Example: https://xyz.supabase.co
+  static const String supabaseAnonKey = ""; // Paste your Anon Key here
 }
