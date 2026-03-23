@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import '../models/provider_model.dart';
 import '../config/theme.dart';
+import 'glass_card.dart';
 import 'star_rating.dart';
 
 class ProviderCard extends StatelessWidget {
@@ -15,41 +17,52 @@ class ProviderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = isDark ? AppColorsDark.primary : AppColors.primary;
+
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 150,
-        margin: const EdgeInsets.only(right: AppTheme.p12),
-        padding: const EdgeInsets.all(AppTheme.p12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.border),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: AppTheme.surface,
-              child: const Icon(Icons.person, color: AppTheme.textSecondary), // TODO: Use provider.profilePhotoUrl
-            ),
-            const SizedBox(height: AppTheme.p8),
-            Text(
-              provider.fullName,
-              style: AppTheme.textTheme.displaySmall?.copyWith(fontSize: 14),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: AppTheme.p4),
-            StarRating(rating: provider.rating),
-            const SizedBox(height: AppTheme.p4),
-            Text(
-              '${provider.totalReviews} reviews',
-              style: AppTheme.textTheme.bodySmall,
-            ),
-          ],
+      child: GlassCard(
+        margin: const EdgeInsets.only(right: AppSpacing.md),
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: SizedBox(
+          width: 140,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: isDark ? AppColorsDark.primarySurface : AppColors.primarySurface,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                child: Center(
+                  child: HugeIcon(icon: HugeIcons.strokeRoundedUserCircle, color: primary, size: 28),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                provider.fullName,
+                style: AppTextStyles.labelLarge.copyWith(
+                  color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              StarRating(rating: provider.rating),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                '${provider.totalReviews} reviews',
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: isDark ? AppColorsDark.textHint : AppColors.textHint,
+                  fontSize: 10,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

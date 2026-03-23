@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
@@ -82,7 +83,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                               child: CircleAvatar(
                                 radius: 50,
                                 backgroundColor: isDark ? AppColorsDark.primarySurface : AppColors.primarySurface,
-                                child: HugeIcon(icon: HugeIcons.strokeRoundedUser01, color: primary, size: 40),
+                                child: HugeIcon(icon: HugeIcons.strokeRoundedUserCircle, color: primary, size: 40),
                               ),
                             ),
                             Positioned(
@@ -101,7 +102,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       CustomTextField(
                         label: 'Full Name',
                         controller: _nameController,
-                        prefixIcon: HugeIcons.strokeRoundedUserIdentityCard,
+                        prefixIcon: HugeIcons.strokeRoundedPassport,
                         hintText: 'Your given names',
                       ),
                       const SizedBox(height: AppSpacing.xl),

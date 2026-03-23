@@ -100,7 +100,7 @@ class OffersScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          Text(title.toUpperCase(), style: AppTextStyles.displaySmall.copyWith(fontSize: 16, letterSpacing: 0.5)),
+          Text(title.toUpperCase(), style: AppTextStyles.headingSmall.copyWith(fontSize: 16, letterSpacing: 0.5)),
           const SizedBox(height: 8),
           Text(
             desc,

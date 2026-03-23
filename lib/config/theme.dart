@@ -37,6 +37,18 @@ class AppColors {
   static const Color orbColor1          = Color(0x1E4F46E5);
   static const Color orbColor2          = Color(0x1CA08040);
   static const Color orbColor3          = Color(0x166366F1);
+
+  // Status chip colours
+  static const Color pendingBg          = Color(0x1AC47B0A);
+  static const Color pendingText        = Color(0xFFC47B0A);
+  static const Color confirmedBg        = Color(0x1A2255CC);
+  static const Color confirmedText      = Color(0xFF2255CC);
+  static const Color inProgressBg       = Color(0x1A4F46E5);
+  static const Color inProgressText     = Color(0xFF4F46E5);
+  static const Color completedBg        = Color(0x1A1A7A4A);
+  static const Color completedText      = Color(0xFF1A7A4A);
+  static const Color cancelledBg        = Color(0x1AB83232);
+  static const Color cancelledText      = Color(0xFFB83232);
 }
 
 class AppColorsDark {
@@ -75,17 +87,30 @@ class AppColorsDark {
   static const Color orbColor1          = Color(0x384F46E5);
   static const Color orbColor2          = Color(0x1AD4B866);
   static const Color orbColor3          = Color(0x22818CF8);
+
+  // Status chip colours
+  static const Color pendingBg          = Color(0x1AE6B030);
+  static const Color pendingText        = Color(0xFFE6B030);
+  static const Color confirmedBg        = Color(0x1A5B8DEF);
+  static const Color confirmedText      = Color(0xFF5B8DEF);
+  static const Color inProgressBg       = Color(0x1A818CF8);
+  static const Color inProgressText     = Color(0xFF818CF8);
+  static const Color completedBg        = Color(0x1A3DAA6A);
+  static const Color completedText      = Color(0xFF3DAA6A);
+  static const Color cancelledBg        = Color(0x1AE05555);
+  static const Color cancelledText      = Color(0xFFE05555);
 }
 
 class AppTextStyles {
   // --- PART 1: TYPOGRAPHY ---
-  static TextStyle get displayLarge => GoogleFonts.playfairDisplay(fontSize: 28, fontWeight: FontWeight.w700, height: 1.2);
+  static TextStyle get displayLarge  => GoogleFonts.playfairDisplay(fontSize: 28, fontWeight: FontWeight.w700, height: 1.2);
   static TextStyle get displayMedium => GoogleFonts.playfairDisplay(fontSize: 24, fontWeight: FontWeight.w700, height: 1.25);
-  static TextStyle get headingLarge => GoogleFonts.playfairDisplay(fontSize: 20, fontWeight: FontWeight.w700, height: 1.3);
+  static TextStyle get displaySmall  => GoogleFonts.playfairDisplay(fontSize: 20, fontWeight: FontWeight.w600, height: 1.3);
+  static TextStyle get headingLarge  => GoogleFonts.playfairDisplay(fontSize: 20, fontWeight: FontWeight.w700, height: 1.3);
   static TextStyle get headingMedium => GoogleFonts.playfairDisplay(fontSize: 18, fontWeight: FontWeight.w600, height: 1.3);
-  static TextStyle get headingSmall => GoogleFonts.playfairDisplay(fontSize: 16, fontWeight: FontWeight.w600, height: 1.35);
-  static TextStyle get priceText => GoogleFonts.playfairDisplay(fontSize: 18, fontWeight: FontWeight.w700);
-  static TextStyle get priceLarge => GoogleFonts.playfairDisplay(fontSize: 24, fontWeight: FontWeight.w700);
+  static TextStyle get headingSmall  => GoogleFonts.playfairDisplay(fontSize: 16, fontWeight: FontWeight.w600, height: 1.35);
+  static TextStyle get priceText     => GoogleFonts.playfairDisplay(fontSize: 18, fontWeight: FontWeight.w700);
+  static TextStyle get priceLarge    => GoogleFonts.playfairDisplay(fontSize: 24, fontWeight: FontWeight.w700);
 
   static TextStyle get bodyLarge => GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w400, height: 1.6);
   static TextStyle get bodyMedium => GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w400, height: 1.6);

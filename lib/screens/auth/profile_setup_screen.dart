@@ -75,7 +75,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                           child: CircleAvatar(
                             radius: 54,
                             backgroundColor: isDark ? AppColorsDark.primarySurface : AppColors.primarySurface,
-                            child: HugeIcon(icon: HugeIcons.strokeRoundedUser01, color: primary, size: 48),
+                            child: HugeIcon(icon: HugeIcons.strokeRoundedUserCircle, color: primary, size: 48),
                           ),
                         ),
                         Positioned(
@@ -103,7 +103,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     hintText: 'Enter your given names',
                     controller: _nameController,
                     validator: (val) => val == null || val.isEmpty ? 'Commit your name for identification' : null,
-                    prefixIcon: HugeIcons.strokeRoundedUserIdentityCard,
+                    prefixIcon: HugeIcons.strokeRoundedPassport,
                   ),
                   const SizedBox(height: 48),
                   CustomButton(

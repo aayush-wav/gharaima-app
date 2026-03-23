@@ -102,7 +102,7 @@ class ServiceCard extends StatelessWidget {
     final n = name.toLowerCase();
     if (n.contains('clean')) return HugeIcons.strokeRoundedSparkles;
     if (n.contains('plumb')) return HugeIcons.strokeRoundedDroplet;
-    if (n.contains('electri')) return HugeIcons.strokeRoundedLightbulb;
+    if (n.contains('electri')) return HugeIcons.strokeRoundedLightning02;
     if (n.contains('beauty') || n.contains('salon')) return HugeIcons.strokeRoundedFlower;
     return HugeIcons.strokeRoundedTask01;
   }

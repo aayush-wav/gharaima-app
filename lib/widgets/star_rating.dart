@@ -13,15 +13,18 @@ class StarRating extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final starColor = isDark ? AppColorsDark.warning : AppColors.warning;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(5, (index) {
         if (index < rating.floor()) {
-          return Icon(Icons.star, color: AppTheme.warning, size: size);
+          return Icon(Icons.star, color: starColor, size: size);
         } else if (index < rating) {
-          return Icon(Icons.star_half, color: AppTheme.warning, size: size);
+          return Icon(Icons.star_half, color: starColor, size: size);
         } else {
-          return Icon(Icons.star_border, color: AppTheme.warning, size: size);
+          return Icon(Icons.star_border, color: starColor, size: size);
         }
       }),
     );

@@ -355,7 +355,7 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
         Text('Choose Method', style: AppTextStyles.headingLarge),
         const SizedBox(height: AppSpacing.md),
         _buildPaymentOption('Secure Cash on Service', HugeIcons.strokeRoundedMoney03, isDark, isSelected: true),
-        _buildPaymentOption('eSewa / Khalti Payments', HugeIcons.strokeRoundedSmartphone01, isDark, isAvailable: false),
+        _buildPaymentOption('eSewa / Khalti Payments', HugeIcons.strokeRoundedSmartphone02, isDark, isAvailable: false),
       ],
     );
   }

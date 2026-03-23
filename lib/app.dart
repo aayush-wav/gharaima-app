@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -106,7 +107,7 @@ class App extends ConsumerWidget {
                         unselectedLabelStyle: AppTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w400),
                         items: [
                           _buildNavItem(HugeIcons.strokeRoundedHome01, 'Home', 0, navigationShell.currentIndex, isDark),
-                          _buildNavItem(HugeIcons.strokeRoundedHot01, 'Offers', 1, navigationShell.currentIndex, isDark),
+                          _buildNavItem(HugeIcons.strokeRoundedTicket01, 'Offers', 1, navigationShell.currentIndex, isDark),
                           _buildNavItem(HugeIcons.strokeRoundedCalendar03, 'Activity', 2, navigationShell.currentIndex, isDark),
                           _buildNavItem(HugeIcons.strokeRoundedUser, 'Profile', 3, navigationShell.currentIndex, isDark),
                         ],
