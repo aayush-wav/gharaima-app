@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import '../../config/theme.dart';
 import '../../models/booking_model.dart';
 import '../../providers/auth_provider.dart';
@@ -8,6 +9,7 @@ import '../../providers/booking_provider.dart';
 import '../../utils/date_formatter.dart';
 import '../../utils/price_formatter.dart';
 import '../../widgets/booking_status_chip.dart';
+import '../../widgets/glass_card.dart';
 
 class MyBookingsScreen extends ConsumerStatefulWidget {
   const MyBookingsScreen({super.key});
@@ -22,7 +24,7 @@ class _MyBookingsScreenState extends ConsumerState<MyBookingsScreen> with Single
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -33,40 +35,64 @@ class _MyBookingsScreenState extends ConsumerState<MyBookingsScreen> with Single
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: AppTheme.background,
-      appBar: AppBar(
-        title: Text('Activity Tracker', style: AppTheme.textTheme.displayMedium),
-        elevation: 0,
-        backgroundColor: AppTheme.background,
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Ongoing'),
-            Tab(text: 'History'),
-          ],
+      body: OrbBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.xl),
+                child: Row(
+                  children: [
+                    Text('Activity Tracker', style: AppTextStyles.displayMedium),
+                  ],
+                ),
+              ),
+              TabBar(
+                controller: _tabController,
+                indicatorColor: isDark ? AppColorsDark.primary : AppColors.primary,
+                labelColor: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
+                unselectedLabelColor: isDark ? AppColorsDark.textHint : AppColors.textHint,
+                labelStyle: AppTextStyles.labelLarge,
+                dividerColor: Colors.transparent,
+                tabs: const [
+                  Tab(text: 'Ongoing'),
+                  Tab(text: 'History'),
+                ],
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildBookingList(['pending', 'confirmed', 'in_progress']),
+                    _buildBookingList(['completed']),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildBookingList(['pending', 'confirmed', 'in_progress']),
-          _buildBookingList(['completed']),
-        ],
       ),
     );
   }
 
   Widget _buildBookingList(List<String> statuses) {
     final user = ref.watch(currentUserProvider);
-    if (user == null) return const Center(child: Text('Join us to track your activities'));
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Combined stream for multiple statuses if needed, or filter in data
-    final bookings = ref.watch(userBookingsProvider(statuses.first)); // Simplified for demo
+    if (user == null) {
+      return Center(
+        child: Text('Join us to track your activities', style: AppTextStyles.bodyMedium),
+      );
+    }
+
+    // Combined stream for multiple statuses if needed
+    final bookings = ref.watch(userBookingsProvider(statuses.first));
 
     return bookings.when(
       data: (data) {
-        // Filter for simplicity since provider might be status-specific
         final filteredData = data.where((b) => statuses.contains(b.status)).toList();
 
         if (filteredData.isEmpty) {
@@ -74,19 +100,19 @@ class _MyBookingsScreenState extends ConsumerState<MyBookingsScreen> with Single
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.05), shape: BoxShape.circle),
-                  child: Icon(Icons.auto_awesome_rounded, size: 64, color: AppTheme.primary.withOpacity(0.2)),
+                HugeIcon(
+                  icon: HugeIcons.strokeRoundedCalendar03, 
+                  color: (isDark ? AppColorsDark.textHint : AppColors.textHint).withOpacity(0.3), 
+                  size: 64
                 ),
                 const SizedBox(height: 24),
-                Text('Nothing to show here', style: AppTheme.textTheme.bodyLarge?.copyWith(color: AppTheme.textMuted)),
+                Text('Nothing to show', style: AppTextStyles.bodyMedium),
               ],
             ),
           );
         }
         return ListView.builder(
-          padding: const EdgeInsets.all(AppTheme.p24),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           physics: const BouncingScrollPhysics(),
           itemCount: filteredData.length,
           itemBuilder: (context, index) => _buildActivityCard(filteredData[index]),
@@ -98,99 +124,98 @@ class _MyBookingsScreenState extends ConsumerState<MyBookingsScreen> with Single
   }
 
   Widget _buildActivityCard(BookingModel booking) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppTheme.border, width: 1.5),
-        boxShadow: const [AppTheme.softShadow],
-      ),
-      child: InkWell(
-        onTap: () => context.push('/bookings/${booking.id}'),
-        borderRadius: BorderRadius.circular(28),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = isDark ? AppColorsDark.primary : AppColors.primary;
+
+    return GestureDetector(
+      onTap: () => context.push('/bookings/${booking.id}'),
+      child: GlassCard(
+        margin: const EdgeInsets.only(bottom: AppSpacing.lg),
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'ID: #${booking.id.substring(0, 6).toUpperCase()}',
+                  style: AppTextStyles.labelSmall.copyWith(color: (isDark ? AppColorsDark.textHint : AppColors.textHint)),
+                ),
+                BookingStatusChip(status: booking.status),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Container(
+                  height: 48,
+                  width: 48,
+                  decoration: BoxDecoration(
+                    color: primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
+                  ),
+                  child: Center(
+                    child: HugeIcon(icon: HugeIcons.strokeRoundedTask01, color: primary, size: 24),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Service Request',
+                        style: AppTextStyles.headingSmall,
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          HugeIcon(icon: HugeIcons.strokeRoundedCalendar01, color: (isDark ? AppColorsDark.textHint : AppColors.textHint), size: 14),
+                          const SizedBox(width: 6),
+                          Text(
+                            DateFormatter.formatDateTime(booking.scheduledAt),
+                            style: AppTextStyles.bodySmall.copyWith(color: (isDark ? AppColorsDark.textHint : AppColors.textHint)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 32, thickness: 0.5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('TOTAL PRICE', style: AppTextStyles.overline.copyWith(color: (isDark ? AppColorsDark.textHint : AppColors.textHint))),
+                    Text(
+                      PriceFormatter.format(booking.totalPrice ?? 0),
+                      style: AppTextStyles.priceText.copyWith(color: primary),
+                    ),
+                  ],
+                ),
+                InkWell(
+                  onTap: () => context.push('/bookings/${booking.id}'),
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: AppTheme.primary.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(10),
+                      color: primary,
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
                     ),
                     child: Text(
-                      'ID: #${booking.id.substring(0, 6).toUpperCase()}',
-                      style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 0.5),
-                    ),
-                  ),
-                  BookingStatusChip(status: booking.status),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Container(
-                    height: 54,
-                    width: 54,
-                    decoration: BoxDecoration(
-                      color: AppTheme.background,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: const Icon(Icons.home_repair_service_rounded, color: AppTheme.primary, size: 28),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Service Request', style: AppTheme.textTheme.displaySmall?.copyWith(fontSize: 17)),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            const Icon(Icons.calendar_today_rounded, size: 12, color: AppTheme.textMuted),
-                            const SizedBox(width: 6),
-                            Text(
-                              DateFormatter.formatDateTime(booking.scheduledAt),
-                              style: AppTheme.textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Divider(height: 1),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    PriceFormatter.format(booking.totalPrice ?? 0),
-                    style: AppTheme.textTheme.displaySmall?.copyWith(color: AppTheme.primary, fontSize: 18),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: AppTheme.textPrimary,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: const Text(
                       'Manage',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                      style: AppTextStyles.labelSmall.copyWith(color: isDark ? AppColorsDark.textOnPrimary : AppColors.textOnPrimary),
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

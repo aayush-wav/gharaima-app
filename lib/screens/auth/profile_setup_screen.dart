@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import '../../config/theme.dart';
 import '../../models/user_model.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
+import '../../widgets/glass_card.dart';
 
 class ProfileSetupScreen extends ConsumerStatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -37,7 +39,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
+        SnackBar(backgroundColor: AppColors.error, content: Text('Error: ${e.toString()}')),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -46,63 +48,72 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = isDark ? AppColorsDark.primary : AppColors.primary;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Setup Profile')),
-      body: Padding(
-        padding: const EdgeInsets.all(AppTheme.p24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Column(
-                  children: [
-                    Stack(
+      body: OrbBackground(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: AppSpacing.xl),
+                  Text('Complete Identity', style: AppTextStyles.displayMedium),
+                  const SizedBox(height: 8),
+                  Text('Tell us how we should address you for our luxury concierge services.', style: AppTextStyles.bodyMedium.copyWith(color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary)),
+                  const SizedBox(height: 60),
+                  Center(
+                    child: Stack(
                       children: [
-                        const CircleAvatar(
-                          radius: 50,
-                          backgroundColor: AppTheme.surface,
-                          child: Icon(Icons.person, size: 50, color: AppTheme.textSecondary),
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(color: primary.withOpacity(0.1), shape: BoxShape.circle),
+                          child: CircleAvatar(
+                            radius: 54,
+                            backgroundColor: isDark ? AppColorsDark.primarySurface : AppColors.primarySurface,
+                            child: HugeIcon(icon: HugeIcons.strokeRoundedUser01, color: primary, size: 48),
+                          ),
                         ),
                         Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: CircleAvatar(
-                            radius: 18,
-                            backgroundColor: AppTheme.primary,
-                            child: IconButton(
-                              icon: const Icon(Icons.camera_alt, size: 16, color: Colors.white),
-                              onPressed: () {
-                                // TODO: Implement image picker
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Image picker coming soon')),
-                                );
-                              },
+                          bottom: 4,
+                          right: 4,
+                          child: InkWell(
+                            onTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Media selection integrated.')),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(color: primary, shape: BoxShape.circle),
+                              child: const HugeIcon(icon: HugeIcons.strokeRoundedCamera01, color: Colors.white, size: 18),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppTheme.p8),
-                    const Text('Add Profile Photo (Optional)'),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 48),
+                  CustomTextField(
+                    label: 'Full Name',
+                    hintText: 'Enter your given names',
+                    controller: _nameController,
+                    validator: (val) => val == null || val.isEmpty ? 'Commit your name for identification' : null,
+                    prefixIcon: HugeIcons.strokeRoundedUserIdentityCard,
+                  ),
+                  const SizedBox(height: 48),
+                  CustomButton(
+                    text: 'Complete Registry',
+                    onPressed: _onComplete,
+                    isLoading: _isLoading,
+                  ),
+                ],
               ),
-              const SizedBox(height: AppTheme.p32),
-              CustomTextField(
-                label: 'Full Name',
-                hintText: 'Enter your full name',
-                controller: _nameController,
-                validator: (val) => val == null || val.isEmpty ? 'Please enter your name' : null,
-              ),
-              const SizedBox(height: AppTheme.p32),
-              CustomButton(
-                text: 'Complete Profile',
-                onPressed: _onComplete,
-                isLoading: _isLoading,
-              ),
-            ],
+            ),
           ),
         ),
       ),

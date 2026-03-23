@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import '../../config/theme.dart';
 import '../../widgets/custom_button.dart';
+import '../../widgets/glass_card.dart';
 
 class BookingConfirmationScreen extends StatefulWidget {
   const BookingConfirmationScreen({super.key});
@@ -18,9 +20,9 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> w
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
     _scaleAnimation = CurvedAnimation(parent: _controller, curve: Curves.elasticOut);
-    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: const Interval(0.4, 1.0, curve: Curves.easeIn));
     _controller.forward();
   }
 
@@ -32,55 +34,64 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> w
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppTheme.background,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppTheme.p32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: AppTheme.success.withOpacity(0.1),
-                      shape: BoxShape.circle,
+      body: OrbBackground(
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpacing.xxl),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: Container(
+                      padding: const EdgeInsets.all(32),
+                      decoration: BoxDecoration(
+                        color: (isDark ? AppColorsDark.success : AppColors.success).withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedCheckmarkCircle01, 
+                        size: 80, 
+                        color: isDark ? AppColorsDark.success : AppColors.success
+                      ),
                     ),
-                    child: const Icon(Icons.check_circle_rounded, size: 100, color: AppTheme.success),
                   ),
-                ),
-                const SizedBox(height: AppTheme.p32),
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Column(
-                    children: [
-                      Text('Booking Placed!', style: AppTheme.textTheme.displayLarge),
-                      const SizedBox(height: AppTheme.p12),
-                      Text(
-                        'Your service has been scheduled. A certified provider will be assigned to your request shortly.',
-                        textAlign: TextAlign.center,
-                        style: AppTheme.textTheme.bodyMedium?.copyWith(height: 1.5),
-                      ),
-                      const SizedBox(height: 48),
-                      _buildSummaryCard(),
-                      const SizedBox(height: 48),
-                      CustomButton(
-                        text: 'Track My Booking',
-                        onPressed: () => context.go('/bookings'),
-                      ),
-                      const SizedBox(height: 16),
-                      TextButton(
-                        onPressed: () => context.go('/home'),
-                        style: TextButton.styleFrom(foregroundColor: AppTheme.textSecondary),
-                        child: const Text('Back to Home', style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ],
+                  const SizedBox(height: AppSpacing.xxl),
+                  FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Column(
+                      children: [
+                        Text('Booking Placed!', style: AppTextStyles.displayLarge),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Your service request has been successfully received. We will assign a certified provider shortly.',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary,
+                            height: 1.5
+                          ),
+                        ),
+                        const SizedBox(height: 48),
+                        _buildSummaryCard(isDark),
+                        const SizedBox(height: 48),
+                        CustomButton(
+                          text: 'Track Activity',
+                          onPressed: () => context.go('/bookings'),
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                        TextButton(
+                          onPressed: () => context.go('/home'),
+                          child: Text('Return to Home', style: AppTextStyles.labelLarge.copyWith(color: isDark ? AppColorsDark.textHint : AppColors.textHint)),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -88,41 +99,34 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> w
     );
   }
 
-  Widget _buildSummaryCard() {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.p24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppTheme.border),
-        boxShadow: const [AppTheme.softShadow],
-      ),
+  Widget _buildSummaryCard(bool isDark) {
+    return GlassCard(
+      padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
         children: [
-          _buildRow('Status', 'Pending Assignment', isStatus: true),
+          _buildRow('STATUS', 'PENDING', isDark, isWarning: true),
           const SizedBox(height: 12),
-          _buildRow('Payment', 'Secure Cash'),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Divider(height: 1),
-          ),
-          _buildRow('Ref Number', 'BK-HAMRO-8291', isBold: true),
+          _buildRow('PAYMENT', 'CASH ON SERVICE', isDark),
+          const Divider(height: 32, thickness: 0.5),
+          _buildRow('REF ID', '#GH-8821', isDark, isBold: true),
         ],
       ),
     );
   }
 
-  Widget _buildRow(String label, String value, {bool isStatus = false, bool isBold = false}) {
+  Widget _buildRow(String label, String value, bool isDark, {bool isWarning = false, bool isBold = false}) {
+    final textHint = isDark ? AppColorsDark.textHint : AppColors.textHint;
+    final textPrimary = isDark ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final warning = isDark ? AppColorsDark.warning : AppColors.warning;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w600, fontSize: 13)),
+        Text(label, style: AppTextStyles.overline.copyWith(color: textHint, letterSpacing: 1.5)),
         Text(
           value,
-          style: TextStyle(
-            fontWeight: isBold ? FontWeight.w800 : FontWeight.w700,
-            fontSize: isBold ? 15 : 14,
-            color: isStatus ? AppTheme.warning : AppTheme.textPrimary,
+          style: (isBold ? AppTextStyles.labelLarge : AppTextStyles.labelMedium).copyWith(
+            color: isWarning ? warning : textPrimary,
           ),
         ),
       ],

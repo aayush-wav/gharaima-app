@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
-import '../../widgets/custom_button.dart';
+import '../../widgets/glass_card.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   Future<void> _logout(BuildContext context, WidgetRef ref) async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout?'),
-        content: const Text('Are you sure you want to log out of your account?'),
+        backgroundColor: isDark ? AppColorsDark.surfaceElevated : AppColors.surfaceElevated,
+        title: Text('Logout Securely?', style: AppTextStyles.headingLarge),
+        content: Text('Are you sure you want to log out of your Gharaima account?', style: AppTextStyles.bodyMedium),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('No')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Yes, Logout', style: TextStyle(color: AppTheme.primary))),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text('No', style: AppTextStyles.labelLarge)),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true), 
+            child: Text('Yes, Logout', style: AppTextStyles.labelLarge.copyWith(color: AppColors.error)),
+          ),
         ],
       ),
     );
@@ -31,135 +37,146 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userProfile = ref.watch(userProfileProvider).value;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = isDark ? AppColorsDark.primary : AppColors.primary;
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 220,
-            floating: false,
-            pinned: true,
-            backgroundColor: AppTheme.primary,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primary, AppTheme.accent],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      body: OrbBackground(
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 240,
+              pinned: true,
+              backgroundColor: isDark ? AppColorsDark.background : AppColors.background,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Stack(
+                  alignment: Alignment.center,
                   children: [
-                    const SizedBox(height: 48),
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                      child: const CircleAvatar(
-                        radius: 44,
-                        backgroundColor: AppTheme.primaryLight,
-                        child: Icon(Icons.person_rounded, size: 40, color: AppTheme.primary),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      userProfile?.fullName ?? 'Service Explorer',
-                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: -0.5),
-                    ),
-                    Text(
-                      userProfile?.phone ?? 'Nepal',
-                      style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 13, fontWeight: FontWeight.w600),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 60),
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(color: primary.withOpacity(0.1), shape: BoxShape.circle),
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundColor: isDark ? AppColorsDark.primarySurface : AppColors.primarySurface,
+                            child: HugeIcon(icon: HugeIcons.strokeRoundedUser, color: primary, size: 40),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          userProfile?.fullName ?? 'Service Explorer',
+                          style: AppTextStyles.displayMedium.copyWith(color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary),
+                        ),
+                        Text(
+                          userProfile?.phone ?? 'Nepal',
+                          style: AppTextStyles.bodyMedium.copyWith(color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(AppTheme.p24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle('Account Management'),
-                  const SizedBox(height: 12),
-                  _buildProfileCard([
-                    _buildMenuRow(Icons.person_outline_rounded, 'Edit Profile', () => context.push('/profile/edit')),
-                    _buildMenuRow(Icons.location_on_outlined, 'Saved Addresses', () {}),
-                    _buildMenuRow(Icons.payment_rounded, 'Payment Methods', () {}),
-                  ]),
-                  
-                  const SizedBox(height: 28),
-                  _buildSectionTitle('Engagement'),
-                  const SizedBox(height: 12),
-                  _buildProfileCard([
-                    _buildMenuRow(Icons.star_outline_rounded, 'Reviews & Ratings', () {}),
-                    _buildMenuRow(Icons.share_outlined, 'Invite Friends', () {}),
-                    _buildMenuRow(Icons.help_outline_rounded, 'Support Center', () {}),
-                  ]),
-                  
-                  const SizedBox(height: 40),
-                  Container(
-                    width: double.infinity,
-                    child: TextButton(
-                      onPressed: () => _logout(context, ref),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        foregroundColor: AppTheme.error,
-                        backgroundColor: AppTheme.error.withOpacity(0.05),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.xl),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSectionTitle('Account settings', isDark),
+                    const SizedBox(height: AppSpacing.md),
+                    GlassCard(
+                      padding: EdgeInsets.zero,
+                      child: Column(
+                        children: [
+                          _buildMenuRow(HugeIcons.strokeRoundedPencilEdit01, 'Edit Profile', () => context.push('/profile/edit'), isDark),
+                          _buildMenuRow(HugeIcons.strokeRoundedMapsLocation01, 'Saved Addresses', () {}, isDark),
+                          _buildMenuRow(HugeIcons.strokeRoundedCreditCard, 'Payment Methods', () {}, isDark),
+                        ],
                       ),
-                      child: const Text('Sign Out Securely', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Center(
-                    child: Text('Version 2.4.0 (Gold)', style: AppTheme.textTheme.bodySmall),
-                  ),
-                  const SizedBox(height: 40),
-                ],
+                    
+                    const SizedBox(height: AppSpacing.xxl),
+                    _buildSectionTitle('Engagement', isDark),
+                    const SizedBox(height: AppSpacing.md),
+                    GlassCard(
+                      padding: EdgeInsets.zero,
+                      child: Column(
+                        children: [
+                          _buildMenuRow(HugeIcons.strokeRoundedStar, 'Reviews & Ratings', () {}, isDark),
+                          _buildMenuRow(HugeIcons.strokeRoundedShare01, 'Invite Friends', () {}, isDark),
+                          _buildMenuRow(HugeIcons.strokeRoundedHelpCircle, 'Support Center', () {}, isDark),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: AppSpacing.xxxl),
+                    InkWell(
+                      onTap: () => _logout(context, ref),
+                      borderRadius: BorderRadius.circular(AppRadius.sm),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        decoration: BoxDecoration(
+                          color: AppColors.error.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              HugeIcon(icon: HugeIcons.strokeRoundedLogout01, color: AppColors.error, size: 20),
+                              const SizedBox(width: 12),
+                              Text('Sign Out Securely', style: AppTextStyles.labelLarge.copyWith(color: AppColors.error)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    Center(
+                      child: Text('Version 3.0.0 (Concierge)', style: AppTextStyles.caption.copyWith(color: isDark ? AppColorsDark.textHint : AppColors.textHint)),
+                    ),
+                    const SizedBox(height: 120),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(title.toUpperCase(), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: AppTheme.textMuted, letterSpacing: 1.5));
-  }
-
-  Widget _buildProfileCard(List<Widget> children) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppTheme.border, width: 1.5),
-        boxShadow: const [AppTheme.softShadow],
-      ),
-      child: Column(children: children),
+  Widget _buildSectionTitle(String title, bool isDark) {
+    return Text(
+      title.toUpperCase(), 
+      style: AppTextStyles.overline.copyWith(
+        color: isDark ? AppColorsDark.textHint : AppColors.textHint,
+        letterSpacing: 2.0,
+      )
     );
   }
 
-  Widget _buildMenuRow(IconData icon, String label, VoidCallback onTap) {
+  Widget _buildMenuRow(IconData icon, String label, VoidCallback onTap, bool isDark) {
+    final primary = isDark ? AppColorsDark.primary : AppColors.primary;
+    final textCol = isDark ? AppColorsDark.textPrimary : AppColors.textPrimary;
+
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: AppTheme.background, borderRadius: BorderRadius.circular(12)),
-              child: Icon(icon, size: 20, color: AppTheme.textPrimary),
-            ),
+            HugeIcon(icon: icon, color: primary, size: 22),
             const SizedBox(width: 16),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppTheme.textPrimary)),
+            Text(label, style: AppTextStyles.labelLarge.copyWith(color: textCol)),
             const Spacer(),
-            const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.textMuted),
+            HugeIcon(icon: HugeIcons.strokeRoundedArrowRight01, color: isDark ? AppColorsDark.textHint : AppColors.textHint, size: 18),
           ],
         ),
       ),

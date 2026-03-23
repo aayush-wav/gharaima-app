@@ -8,40 +8,49 @@ class BookingStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    Color bg;
+    Color text;
+
     switch (status.toLowerCase()) {
       case 'pending':
-        color = Colors.orange;
+        bg = isDark ? AppColorsDark.pendingBg : AppColors.pendingBg;
+        text = isDark ? AppColorsDark.pendingText : AppColors.pendingText;
         break;
       case 'confirmed':
-        color = Colors.blue;
+        bg = isDark ? AppColorsDark.confirmedBg : AppColors.confirmedBg;
+        text = isDark ? AppColorsDark.confirmedText : AppColors.confirmedText;
         break;
       case 'in_progress':
-        color = Colors.purple;
+        bg = isDark ? AppColorsDark.inProgressBg : AppColors.inProgressBg;
+        text = isDark ? AppColorsDark.inProgressText : AppColors.inProgressText;
         break;
       case 'completed':
-        color = AppTheme.success;
+        bg = isDark ? AppColorsDark.completedBg : AppColors.completedBg;
+        text = isDark ? AppColorsDark.completedText : AppColors.completedText;
         break;
       case 'cancelled':
-        color = AppTheme.primary;
+        bg = isDark ? AppColorsDark.cancelledBg : AppColors.cancelledBg;
+        text = isDark ? AppColorsDark.cancelledText : AppColors.cancelledText;
         break;
       default:
-        color = AppTheme.textSecondary;
+        bg = isDark ? AppColorsDark.primarySurface : AppColors.primarySurface;
+        text = isDark ? AppColorsDark.textHint : AppColors.textHint;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color),
+        color: bg,
+        borderRadius: BorderRadius.circular(AppRadius.pill),
       ),
       child: Text(
         status.toUpperCase(),
-        style: AppTheme.textTheme.bodySmall?.copyWith(
-          color: color,
-          fontWeight: FontWeight.bold,
-          fontSize: 10,
+        style: AppTextStyles.labelSmall.copyWith(
+          color: text,
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

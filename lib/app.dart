@@ -22,13 +22,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/offers/offers_screen.dart';
 import 'screens/notifications/notifications_screen.dart';
 
+import 'package:hugeicons/hugeicons.dart';
+import 'widgets/glass_card.dart';
+
 class App extends ConsumerWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateProvider);
-
     final router = GoRouter(
       initialLocation: '/',
       redirect: (context, state) async {
@@ -77,30 +78,41 @@ class App extends ConsumerWidget {
         // Shell route for bottom nav
         StatefulShellRoute.indexedStack(
           builder: (context, state, navigationShell) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            final glassFill = isDark ? AppColorsDark.glassFill : AppColors.glassFill;
+
             return Scaffold(
               body: navigationShell,
+              extendBody: true,
               bottomNavigationBar: Container(
+                height: 84, // Extra space for pill and glass aesthetics
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(top: BorderSide(color: AppTheme.border, width: 0.5)),
-                  boxShadow: const [AppTheme.softShadow],
+                  border: Border(top: BorderSide(color: (isDark ? AppColorsDark.border : AppColors.border), width: 0.5)),
                 ),
-                child: BottomNavigationBar(
-                  currentIndex: navigationShell.currentIndex,
-                  onTap: (index) => navigationShell.goBranch(index),
-                  type: BottomNavigationBarType.fixed,
-                  selectedItemColor: AppTheme.primary,
-                  unselectedItemColor: AppTheme.textMuted,
-                  selectedLabelStyle: AppTheme.textTheme.bodySmall?.copyWith(color: AppTheme.primary, fontWeight: FontWeight.bold),
-                  unselectedLabelStyle: AppTheme.textTheme.bodySmall,
-                  showSelectedLabels: true,
-                  showUnselectedLabels: true,
-                  items: const [
-                    BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
-                    BottomNavigationBarItem(icon: Icon(Icons.flash_on_rounded), label: 'Offers'),
-                    BottomNavigationBarItem(icon: Icon(Icons.receipt_long_rounded), label: 'Activity'),
-                    BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Profile'),
-                  ],
+                child: ClipRRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                    child: Container(
+                      color: glassFill,
+                      child: BottomNavigationBar(
+                        currentIndex: navigationShell.currentIndex,
+                        onTap: (index) => navigationShell.goBranch(index),
+                        type: BottomNavigationBarType.fixed,
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        selectedItemColor: isDark ? AppColorsDark.primary : AppColors.primary,
+                        unselectedItemColor: isDark ? AppColorsDark.textHint : AppColors.textHint,
+                        selectedLabelStyle: AppTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600),
+                        unselectedLabelStyle: AppTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w400),
+                        items: [
+                          _buildNavItem(HugeIcons.strokeRoundedHome01, 'Home', 0, navigationShell.currentIndex, isDark),
+                          _buildNavItem(HugeIcons.strokeRoundedHot01, 'Offers', 1, navigationShell.currentIndex, isDark),
+                          _buildNavItem(HugeIcons.strokeRoundedCalendar03, 'Activity', 2, navigationShell.currentIndex, isDark),
+                          _buildNavItem(HugeIcons.strokeRoundedUser, 'Profile', 3, navigationShell.currentIndex, isDark),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
             );
@@ -189,8 +201,36 @@ class App extends ConsumerWidget {
     return MaterialApp.router(
       title: AppConfig.appName,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
+    );
+  }
+
+  BottomNavigationBarItem _buildNavItem(IconData icon, String label, int index, int current, bool isDark) {
+    final isSelected = index == current;
+    final color = isSelected 
+        ? (isDark ? AppColorsDark.primary : AppColors.primary)
+        : (isDark ? AppColorsDark.textHint : AppColors.textHint);
+    
+    return BottomNavigationBarItem(
+      icon: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          HugeIcon(icon: icon, color: color, size: 22),
+          const SizedBox(height: 4),
+          if (isSelected)
+            Container(
+              width: 4,
+              height: 4,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            )
+          else
+            const SizedBox(height: 4),
+        ],
+      ),
+      label: label,
     );
   }
 }

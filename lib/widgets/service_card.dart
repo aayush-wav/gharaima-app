@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import '../models/service_model.dart';
 import '../config/theme.dart';
 import '../utils/price_formatter.dart';
-import 'star_rating.dart';
+import 'glass_card.dart';
 
 class ServiceCard extends StatelessWidget {
   final ServiceModel service;
@@ -18,86 +19,91 @@ class ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = isDark ? AppColorsDark.primary : AppColors.primary;
+    final textSec = isDark ? AppColorsDark.textSecondary : AppColors.textSecondary;
+    final textHint = isDark ? AppColorsDark.textHint : AppColors.textHint;
+
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: AppTheme.p16),
-        padding: const EdgeInsets.all(AppTheme.p16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppTheme.border),
-          boxShadow: const [AppTheme.softShadow],
-        ),
+      child: GlassCard(
+        margin: const EdgeInsets.only(bottom: AppSpacing.lg),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Row(
           children: [
             Container(
-              width: 100,
-              height: 100,
+              width: 56,
+              height: 56,
               decoration: BoxDecoration(
-                color: AppTheme.background,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppTheme.border.withOpacity(0.5)),
+                color: isDark ? AppColorsDark.primarySurface : AppColors.primarySurface,
+                borderRadius: BorderRadius.circular(AppRadius.sm),
               ),
-              child: const Center(
-                child: Icon(Icons.image_rounded, color: AppTheme.textMuted, size: 32),
+              child: Center(
+                child: HugeIcon(
+                  icon: _getIcon(service.name),
+                  color: isDark ? AppColorsDark.primaryLight : AppColors.primaryLight,
+                  size: 24,
+                ),
               ),
             ),
-            const SizedBox(width: AppTheme.p16),
+            const SizedBox(width: AppSpacing.lg),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    service.name,
-                    style: AppTheme.textTheme.displaySmall,
+                    'SERVICE', // Static category label as per spec "overline"
+                    style: AppTextStyles.overline.copyWith(color: primary),
                   ),
-                  const SizedBox(height: AppTheme.p4),
-                  if (service.description != null)
-                    Text(
-                      service.description!,
-                      style: AppTheme.textTheme.bodyMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                  const SizedBox(height: 2),
+                  Text(
+                    service.name,
+                    style: AppTextStyles.headingSmall.copyWith(
+                      color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
                     ),
-                  const SizedBox(height: AppTheme.p12),
+                  ),
+                  const SizedBox(height: 8),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      RichText(
-                        text: TextSpan(
-                          style: AppTheme.textTheme.displaySmall?.copyWith(color: AppTheme.primary, fontSize: 16),
-                          children: [
-                            TextSpan(text: PriceFormatter.format(service.basePrice)),
-                            TextSpan(
-                              text: ' ${service.priceUnit}',
-                              style: AppTheme.textTheme.bodySmall?.copyWith(fontSize: 10),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (showBookingButton)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: AppTheme.primary,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [AppTheme.accentShadow.copyWith(offset: const Offset(0, 4), blurRadius: 10)],
-                          ),
-                          child: const Text(
-                            'Book',
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
-                        ),
+                      HugeIcon(icon: HugeIcons.strokeRoundedStar, color: isDark ? AppColorsDark.warning : AppColors.warning, size: 14),
+                      const SizedBox(width: 4),
+                      Text('4.8', style: AppTextStyles.bodySmall.copyWith(color: textSec)),
+                      const SizedBox(width: 12),
+                      HugeIcon(icon: HugeIcons.strokeRoundedClock01, color: textHint, size: 14),
+                      const SizedBox(width: 4),
+                      Text('45 min', style: AppTextStyles.bodySmall.copyWith(color: textHint)),
                     ],
                   ),
                 ],
               ),
             ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  PriceFormatter.format(service.basePrice),
+                  style: AppTextStyles.priceText.copyWith(
+                    color: isDark ? AppColorsDark.primary : AppColors.primaryDark,
+                  ),
+                ),
+                Text(
+                  service.priceUnit,
+                  style: AppTextStyles.labelSmall.copyWith(color: textHint),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
+  }
+
+  IconData _getIcon(String name) {
+    final n = name.toLowerCase();
+    if (n.contains('clean')) return HugeIcons.strokeRoundedSparkles;
+    if (n.contains('plumb')) return HugeIcons.strokeRoundedDroplet;
+    if (n.contains('electri')) return HugeIcons.strokeRoundedLightbulb;
+    if (n.contains('beauty') || n.contains('salon')) return HugeIcons.strokeRoundedFlower;
+    return HugeIcons.strokeRoundedTask01;
   }
 }

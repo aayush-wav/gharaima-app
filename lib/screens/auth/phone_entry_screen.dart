@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../utils/validators.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
+import '../../widgets/glass_card.dart';
 
 class PhoneEntryScreen extends ConsumerStatefulWidget {
   const PhoneEntryScreen({super.key});
@@ -29,7 +31,7 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
       context.push('/auth/otp', extra: phone);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
+        SnackBar(backgroundColor: AppColors.error, content: Text('Error: ${e.toString()}')),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -38,113 +40,110 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: TweenAnimationBuilder<double>(
-          tween: Tween(begin: 0.0, end: 1.0),
-          duration: const Duration(milliseconds: 800),
-          curve: Curves.easeOutCubic,
-          builder: (context, value, child) {
-            return Opacity(
-              opacity: value,
-              child: Transform.translate(
-                offset: Offset(0, 30 * (1 - value)),
-                child: child,
-              ),
-            );
-          },
+      body: OrbBackground(
+        child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.p32, vertical: AppTheme.p16),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Spacer(flex: 2),
+                  const Spacer(flex: 3),
                   
-                  // Brand Section
+                  // Elegant Brand Presence
                   Center(
                     child: Container(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(32),
                       decoration: BoxDecoration(
-                        color: AppTheme.primary.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(36),
+                        color: (isDark ? AppColorsDark.primary : AppColors.primary).withOpacity(0.1),
+                        shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.home_repair_service_rounded, size: 72, color: AppTheme.primary),
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedHome04, 
+                        size: 64, 
+                        color: isDark ? AppColorsDark.primary : AppColors.primary
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 48),
                   Text(
                     'Gharaima App',
-                    style: AppTheme.textTheme.displayLarge?.copyWith(fontSize: 34, letterSpacing: -1.5),
+                    style: AppTextStyles.displayLarge.copyWith(fontSize: 40),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: AppTheme.p12),
+                  const SizedBox(height: 8),
                   Text(
                     'Expert home services, beautifully delivered at your doorstep.',
-                    style: AppTheme.textTheme.bodyMedium?.copyWith(color: AppTheme.textMuted, fontSize: 16),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary,
+                      height: 1.5,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   
-                  const Spacer(),
+                  const Spacer(flex: 2),
                   
-                  // Entry Section (Animated separately if needed, but here simple fade)
+                  // Phone Entry Section
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        height: 60,
-                        padding: const EdgeInsets.symmetric(horizontal: 18),
+                        height: 58,
+                        width: 70,
                         decoration: BoxDecoration(
-                          color: AppTheme.background,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppTheme.border, width: 2),
+                          color: isDark ? AppColorsDark.primarySurface : AppColors.primarySurface,
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
+                          border: Border.all(color: isDark ? AppColorsDark.border : AppColors.border, width: 0.5),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            '🇳🇵 +977',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: AppTheme.textPrimary),
+                            '+977',
+                            style: AppTextStyles.labelLarge.copyWith(color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary),
                           ),
                         ),
                       ),
-                      const SizedBox(width: AppTheme.p12),
+                      const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: CustomTextField(
-                          label: '',
+                          label: 'Phone number',
                           hintText: '98XXXXXXXX',
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
                           validator: Validators.validatePhone,
+                          prefixIcon: HugeIcons.strokeRoundedSmartphone01,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppTheme.p24),
+                  const SizedBox(height: AppSpacing.xl),
                   CustomButton(
                     text: 'Continue',
                     onPressed: _sendOTP,
                     isLoading: _isLoading,
                   ),
-                  const SizedBox(height: AppTheme.p12),
+                  const SizedBox(height: AppSpacing.xl),
                   
-                  // Demo Option
+                  // Luxury Demo Hub
                   TextButton(
                     onPressed: () {
                       ref.read(guestModeProvider.notifier).state = true;
                       context.go('/home');
                     },
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: AppTheme.primaryLight.withOpacity(0.5),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      backgroundColor: (isDark ? AppColorsDark.primary : AppColors.primary).withOpacity(0.1),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Explore Demo Mode', style: AppTheme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w800, color: AppTheme.primary)),
+                        Text('Explore Demo Mode', style: AppTextStyles.labelLarge.copyWith(color: isDark ? AppColorsDark.primary : AppColors.primary)),
                         const SizedBox(width: 8),
-                        const Icon(Icons.arrow_forward_rounded, size: 16, color: AppTheme.primary),
+                        HugeIcon(icon: HugeIcons.strokeRoundedArrowRight01, color: isDark ? AppColorsDark.primary : AppColors.primary, size: 16),
                       ],
                     ),
                   ),
@@ -152,11 +151,11 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
                   const Spacer(flex: 3),
                   
                   Text(
-                    "By continuing, you agree to our Terms of Service.",
-                    style: TextStyle(fontSize: 10, color: AppTheme.textMuted, fontWeight: FontWeight.w600),
+                    "By continuing, you secure your commitment to our luxury standards.",
+                    style: AppTextStyles.caption.copyWith(color: isDark ? AppColorsDark.textHint : AppColors.textHint, fontSize: 10),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: AppTheme.p16),
+                  const SizedBox(height: AppSpacing.xl),
                 ],
               ),
             ),
