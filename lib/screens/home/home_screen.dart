@@ -36,16 +36,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final firstName = userProfile?.fullName?.split(' ').first ?? 'Guest';
 
     return Scaffold(
+      backgroundColor: AppTheme.background,
       body: SafeArea(
         child: RefreshIndicator(
+          color: AppTheme.primary,
           onRefresh: () async {
             ref.invalidate(categoriesProvider);
             ref.invalidate(servicesProvider(null));
             ref.invalidate(userProfileProvider);
           },
           child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: AppTheme.p16),
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(vertical: AppTheme.p24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -59,37 +61,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${_getGreeting()}, $firstName',
-                            style: AppTheme.textTheme.displayMedium,
-                          ),
-                          const SizedBox(height: AppTheme.p4),
-                          GestureDetector(
-                            onTap: () {
-                              context.go('/profile/edit');
-                            },
-                            child: Row(
-                              children: [
-                                const Icon(Icons.location_on_outlined, size: 14, color: AppTheme.primary),
-                                const SizedBox(width: AppTheme.p4),
-                                Text(
-                                  userProfile?.defaultAddress ?? 'Set your location',
-                                  style: AppTheme.textTheme.bodySmall?.copyWith(color: AppTheme.primary),
-                                ),
-                              ],
+                            _getGreeting(),
+                            style: AppTheme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.2,
+                              color: AppTheme.textMuted,
                             ),
+                          ),
+                          Text(
+                            firstName,
+                            style: AppTheme.textTheme.displayLarge,
                           ),
                         ],
                       ),
-                      IconButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Notifications coming soon!')),
-                          );
-                        },
-                        icon: const Badge(
-                          label: Text('2', style: TextStyle(fontSize: 8)),
-                          child: Icon(Icons.notifications_outlined),
-                        ),
+                      Row(
+                        children: [
+                          _buildHeaderIcon(Icons.search_rounded),
+                          const SizedBox(width: 12),
+                          _buildHeaderIcon(Icons.notifications_none_rounded, hasBadge: true),
+                        ],
                       ),
                     ],
                   ),
@@ -97,67 +87,60 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                 const SizedBox(height: AppTheme.p24),
 
-                // Search bar
+                // Location Picker
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: AppTheme.p24),
-                  child: GestureDetector(
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Search coming soon!')),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: AppTheme.surface,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: AppTheme.border),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.search, color: AppTheme.textSecondary),
-                          SizedBox(width: 12),
-                          Text('Search for services...', style: TextStyle(color: AppTheme.textSecondary)),
-                        ],
-                      ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.location_on_rounded, size: 18, color: AppTheme.primary),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            userProfile?.defaultAddress ?? 'Set your delivery location',
+                            style: AppTheme.textTheme.bodyMedium?.copyWith(
+                              color: AppTheme.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.primary),
+                      ],
                     ),
                   ),
                 ),
 
-                const SizedBox(height: AppTheme.p24),
+                const SizedBox(height: AppTheme.p32),
 
                 // Promotional banner
                 SizedBox(
-                  height: 150,
+                  height: 180,
                   child: PageView(
                     controller: _pageController,
                     onPageChanged: (index) => setState(() => _currentPage = index),
                     children: [
                       _buildPromoCard(
-                        'Book your first cleaning — 20% off',
-                        'Use code: HELLO20',
-                        [Colors.red.shade400, Colors.red.shade700],
+                        'Premium Cleaning',
+                        'Get 20% off your first home deep clean.',
+                        'CODE: CLEAN20',
+                        [const Color(0xFF6366F1), const Color(0xFF4F46E5)],
+                        Icons.cleaning_services_rounded,
                       ),
                       _buildPromoCard(
-                        'Refer a friend, earn Rs. 200',
-                        'Tell your friends about us!',
-                        [Colors.blue.shade400, Colors.blue.shade700],
+                        'Refer & Earn',
+                        'Invite friends and get Rs. 200 in your wallet.',
+                        'INVITE NOW',
+                        [const Color(0xFF7C3AED), const Color(0xFF6D28D9)],
+                        Icons.card_giftcard_rounded,
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: AppTheme.p8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(2, (index) => Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _currentPage == index ? AppTheme.primary : AppTheme.border,
-                    ),
-                  )),
                 ),
 
                 const SizedBox(height: AppTheme.p24),
@@ -167,22 +150,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: AppTheme.p24),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('What do you need?', style: AppTheme.textTheme.displaySmall),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Categories', style: AppTheme.textTheme.displayMedium),
+                          const SizedBox(height: 4),
+                          Container(height: 3, width: 40, decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(2))),
+                        ],
+                      ),
                       TextButton(
-                        onPressed: () {
-                          // TODO: Navigate to categories list
-                        },
-                        child: const Text('See All'),
+                        onPressed: () {},
+                        style: TextButton.styleFrom(foregroundColor: AppTheme.primary),
+                        child: const Row(
+                          children: [
+                            Text('See All', style: TextStyle(fontWeight: FontWeight.bold)),
+                            Icon(Icons.chevron_right_rounded, size: 20),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(height: AppTheme.p16),
                 SizedBox(
-                  height: 120,
+                  height: 140, // More breathing room
                   child: categories.when(
                     data: (data) => ListView.builder(
                       scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.symmetric(horizontal: AppTheme.p24),
                       itemCount: data.length,
                       itemBuilder: (context, index) => CategoryCard(
@@ -200,9 +197,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 // Popular services
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: AppTheme.p24),
-                  child: Text('Popular services', style: AppTheme.textTheme.displaySmall),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Popular Services', style: AppTheme.textTheme.displayMedium),
+                      const SizedBox(height: 4),
+                      Container(height: 3, width: 40, decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(2))),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: AppTheme.p16),
+                const SizedBox(height: AppTheme.p20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: AppTheme.p24),
                   child: popularServices.when(
@@ -216,6 +220,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     error: (e, _) => Center(child: Text('Error: ${e.toString()}')),
                   ),
                 ),
+                const SizedBox(height: AppTheme.p32), // Extra padding at bottom
               ],
             ),
           ),
@@ -224,21 +229,86 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildPromoCard(String title, String subtitle, List<Color> colors) {
+  Widget _buildHeaderIcon(IconData icon, {bool hasBadge = false}) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppTheme.border),
+        boxShadow: const [AppTheme.softShadow],
+      ),
+      child: hasBadge 
+        ? Badge(
+            backgroundColor: AppTheme.primary,
+            child: Icon(icon, color: AppTheme.textPrimary, size: 22),
+          )
+        : Icon(icon, color: AppTheme.textPrimary, size: 22),
+    );
+  }
+
+  Widget _buildPromoCard(String title, String desc, String btn, List<Color> colors, IconData icon) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: AppTheme.p24),
-      padding: const EdgeInsets.all(AppTheme.p24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: colors),
-        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: colors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: colors.last.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          )
+        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
         children: [
-          Text(title, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text(subtitle, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+          Positioned(
+            right: -20,
+            bottom: -20,
+            child: Icon(
+              icon,
+              size: 150,
+              color: Colors.white.withOpacity(0.15),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(AppTheme.p24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    btn,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 1),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  title,
+                  style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800, letterSpacing: -0.5),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: 200,
+                  child: Text(
+                    desc,
+                    style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

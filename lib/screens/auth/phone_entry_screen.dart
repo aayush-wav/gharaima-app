@@ -39,53 +39,63 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(AppTheme.p24),
+          padding: const EdgeInsets.symmetric(horizontal: AppTheme.p32, vertical: AppTheme.p16),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Spacer(),
-                const Text(
-                  'Welcome to HamroSewa',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
+                const Spacer(flex: 2),
+                
+                // Brand Section
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    child: const Icon(Icons.home_repair_service_rounded, size: 64, color: AppTheme.primary),
                   ),
+                ),
+                const SizedBox(height: 32),
+                Text(
+                  'Gharaima App',
+                  style: AppTheme.textTheme.displayLarge?.copyWith(fontSize: 32),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppTheme.p12),
-                const Text(
-                  'Enter your phone number to get started',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: AppTheme.textSecondary,
-                  ),
+                Text(
+                  'Your companion for expert home services in Nepal.',
+                  style: AppTheme.textTheme.bodyMedium?.copyWith(color: AppTheme.textMuted),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: AppTheme.p32),
+                
+                const Spacer(),
+                
+                // Entry Section
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      height: 58, // Match textfield height
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      height: 56, // Match TextField height
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppTheme.border),
+                        color: AppTheme.background,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppTheme.border, width: 1.5),
                       ),
                       child: const Center(
                         child: Text(
                           '🇳🇵 +977',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: AppTheme.textPrimary),
                         ),
                       ),
                     ),
-                    const SizedBox(width: AppTheme.p8),
+                    const SizedBox(width: AppTheme.p12),
                     Expanded(
                       child: CustomTextField(
                         label: '',
@@ -99,17 +109,38 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
                 ),
                 const SizedBox(height: AppTheme.p24),
                 CustomButton(
-                  text: 'Send OTP',
+                  text: 'Continue',
                   onPressed: _sendOTP,
                   isLoading: _isLoading,
                 ),
-                const SizedBox(height: AppTheme.p16),
-                const Text(
-                  "We'll send a verification code via SMS",
-                  style: TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+                const SizedBox(height: AppTheme.p12),
+                
+                // Demo Option
+                TextButton(
+                  onPressed: () => context.go('/home'),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Explore Demo Mode', style: AppTheme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w800, color: AppTheme.primary)),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.arrow_forward_rounded, size: 16, color: AppTheme.primary),
+                    ],
+                  ),
+                ),
+                
+                const Spacer(flex: 3),
+                
+                // Subtle attribution
+                Text(
+                  "By continuing, you agree to our Terms of Service.",
+                  style: TextStyle(fontSize: 10, color: AppTheme.textMuted, fontWeight: FontWeight.w500),
                   textAlign: TextAlign.center,
                 ),
-                const Spacer(),
+                const SizedBox(height: AppTheme.p16),
               ],
             ),
           ),

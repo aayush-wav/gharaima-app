@@ -22,31 +22,32 @@ class ServiceCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: AppTheme.p16),
-        padding: const EdgeInsets.all(AppTheme.p12),
+        padding: const EdgeInsets.all(AppTheme.p16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(color: AppTheme.border),
-          boxShadow: const [AppTheme.cardShadow],
+          boxShadow: const [AppTheme.softShadow],
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 80,
-              height: 80,
+              width: 100,
+              height: 100,
               decoration: BoxDecoration(
-                color: AppTheme.surface,
-                borderRadius: BorderRadius.circular(8),
+                color: AppTheme.background,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppTheme.border.withOpacity(0.5)),
               ),
               child: const Center(
-                child: Icon(Icons.image_outlined, color: AppTheme.textSecondary), // TODO: Use service.imageUrl
+                child: Icon(Icons.image_rounded, color: AppTheme.textMuted, size: 32),
               ),
             ),
-            const SizedBox(width: AppTheme.p12),
+            const SizedBox(width: AppTheme.p16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     service.name,
@@ -56,37 +57,38 @@ class ServiceCard extends StatelessWidget {
                   if (service.description != null)
                     Text(
                       service.description!,
-                      style: AppTheme.textTheme.bodySmall,
+                      style: AppTheme.textTheme.bodyMedium,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  const SizedBox(height: AppTheme.p8),
+                  const SizedBox(height: AppTheme.p12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            PriceFormatter.format(service.basePrice),
-                            style: AppTheme.textTheme.displaySmall?.copyWith(
-                              color: AppTheme.primary,
+                      RichText(
+                        text: TextSpan(
+                          style: AppTheme.textTheme.displaySmall?.copyWith(color: AppTheme.primary, fontSize: 16),
+                          children: [
+                            TextSpan(text: PriceFormatter.format(service.basePrice)),
+                            TextSpan(
+                              text: ' ${service.priceUnit}',
+                              style: AppTheme.textTheme.bodySmall?.copyWith(fontSize: 10),
                             ),
-                          ),
-                          Text(
-                            service.priceUnit,
-                            style: AppTheme.textTheme.bodySmall,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       if (showBookingButton)
-                        ElevatedButton(
-                          onPressed: onTap,
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(80, 36),
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primary,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [AppTheme.accentShadow.copyWith(offset: const Offset(0, 4), blurRadius: 10)],
                           ),
-                          child: const Text('Book Now'),
+                          child: const Text(
+                            'Book',
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                          ),
                         ),
                     ],
                   ),
