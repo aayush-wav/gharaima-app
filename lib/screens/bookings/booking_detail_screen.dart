@@ -11,6 +11,7 @@ import '../../utils/date_formatter.dart';
 import '../../utils/price_formatter.dart';
 import '../../widgets/booking_status_chip.dart';
 import '../../widgets/custom_button.dart';
+import '../../widgets/custom_text_field.dart';
 import '../../widgets/star_rating.dart';
 
 class BookingDetailScreen extends ConsumerStatefulWidget {

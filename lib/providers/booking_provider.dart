@@ -2,8 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/booking_model.dart';
 import '../models/service_model.dart';
 import '../models/provider_model.dart';
+import '../services/booking_service.dart';
 import 'auth_provider.dart';
-import 'categories_provider.dart';
+
+final bookingServiceProvider = Provider<BookingService>((ref) => BookingService());
 
 final userBookingsProvider = FutureProvider.family<List<BookingModel>, String?>((ref, status) async {
   final user = ref.watch(currentUserProvider);

@@ -16,5 +16,5 @@ final currentSessionProvider = Provider<Session?>((ref) {
 
 final currentUserProvider = Provider<User?>((ref) {
   final authState = ref.watch(authStateProvider).value;
-  return authState?.user;
+  return authState?.session?.user;
 });
