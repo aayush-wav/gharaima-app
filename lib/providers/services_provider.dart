@@ -11,7 +11,11 @@ final servicesProvider = FutureProvider.family<List<ServiceModel>, int?>((ref, c
   final services = await bookingService.getServices(categoryId: categoryId);
   
   if (query.isEmpty) return services;
-  return services.where((s) => s.name.toLowerCase().contains(query) || s.description.toLowerCase().contains(query)).toList();
+  return services.where((s) {
+    final nameMatch = s.name.toLowerCase().contains(query);
+    final descMatch = (s.description ?? '').toLowerCase().contains(query);
+    return nameMatch || descMatch;
+  }).toList();
 });
 
 final providersProvider = FutureProvider.family<List<ProviderModel>, int?>((ref, categoryId) async {
