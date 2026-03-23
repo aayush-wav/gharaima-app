@@ -8,6 +8,7 @@ import '../../providers/services_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/category_card.dart';
 import '../../widgets/service_card.dart';
+import '../../providers/location_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -18,6 +19,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final _pageController = PageController();
+  final _searchController = TextEditingController();
   int _currentPage = 0;
 
   String _getGreeting() {
@@ -27,11 +29,63 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return 'Good Evening';
   }
 
+  void _showLocationDialog(BuildContext context, WidgetRef ref) {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Set Location', style: TextStyle(fontWeight: FontWeight.w900)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.my_location_rounded, color: AppTheme.primary),
+              title: const Text('Detect Current Location', style: TextStyle(fontWeight: FontWeight.w700)),
+              onTap: () {
+                ref.read(locationProvider.notifier).getCurrentLocation();
+                ref.read(locationProvider.notifier).setAlternateAddress(null);
+                Navigator.pop(context);
+              },
+            ),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  hintText: 'Enter street, area or city...',
+                  prefixIcon: const Icon(Icons.edit_location_alt_rounded),
+                  filled: true,
+                  fillColor: AppTheme.background,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.isNotEmpty) {
+                ref.read(locationProvider.notifier).setAlternateAddress(controller.text);
+                Navigator.pop(context);
+              }
+            },
+            style: ElevatedButton.styleFrom(minimumSize: const Size(120, 48)),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProfile = ref.watch(userProfileProvider).value;
     final categories = ref.watch(categoriesProvider);
     final popularServices = ref.watch(servicesProvider(null));
+    final location = ref.watch(locationProvider);
 
     final firstName = userProfile?.fullName?.split(' ').first ?? 'Guest';
 
@@ -74,13 +128,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          _buildHeaderIcon(Icons.search_rounded),
-                          const SizedBox(width: 12),
-                          _buildHeaderIcon(Icons.notifications_none_rounded, hasBadge: true),
-                        ],
-                      ),
+                      _buildHeaderIcon(Icons.notifications_none_rounded, hasBadge: true, onTap: () => context.push('/notifications')),
                     ],
                   ),
                 ),
@@ -90,28 +138,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 // Location Picker
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: AppTheme.p24),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.location_on_rounded, size: 18, color: AppTheme.primary),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            userProfile?.defaultAddress ?? 'Set your delivery location',
-                            style: AppTheme.textTheme.bodyMedium?.copyWith(
-                              color: AppTheme.textPrimary,
-                              fontWeight: FontWeight.w600,
+                  child: InkWell(
+                    onTap: () => _showLocationDialog(context, ref),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primary.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.location_on_rounded, size: 18, color: AppTheme.primary),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              location.isLoading ? 'Detecting...' : location.currentDisplay,
+                              style: AppTheme.textTheme.bodyMedium?.copyWith(
+                                color: AppTheme.textPrimary,
+                                fontWeight: FontWeight.w900,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        const Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.primary),
-                      ],
+                          const Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.primary),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: AppTheme.p24),
+
+                // Search Bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppTheme.p24),
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (value) => ref.read(searchQueryProvider.notifier).state = value,
+                    decoration: InputDecoration(
+                      hintText: 'Search for "plumbing", "salon"...',
+                      prefixIcon: const Icon(Icons.search_rounded),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: AppTheme.border),
+                      ),
                     ),
                   ),
                 ),
@@ -136,7 +209,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         'Refer & Earn',
                         'Invite friends and get Rs. 200 in your wallet.',
                         'INVITE NOW',
-                        [const Color(0xFF7C3AED), const Color(0xFF6D28D9)],
+                        [const Color(0xFFC084FC), const Color(0xFF6366F1)],
                         Icons.card_giftcard_rounded,
                       ),
                     ],
@@ -175,7 +248,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 const SizedBox(height: AppTheme.p16),
                 SizedBox(
-                  height: 140, // More breathing room
+                  height: 140,
                   child: categories.when(
                     data: (data) => ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -200,7 +273,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Popular Services', style: AppTheme.textTheme.displayMedium),
+                      Text('Recommended for you', style: AppTheme.textTheme.displayMedium),
                       const SizedBox(height: 4),
                       Container(height: 3, width: 40, decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(2))),
                     ],
@@ -211,7 +284,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: AppTheme.p24),
                   child: popularServices.when(
                     data: (data) => Column(
-                      children: data.take(4).map((service) => ServiceCard(
+                      children: data.map((service) => ServiceCard(
                         service: service,
                         onTap: () => context.go('/home/services/${service.id}'),
                       )).toList(),
@@ -220,7 +293,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     error: (e, _) => Center(child: Text('Error: ${e.toString()}')),
                   ),
                 ),
-                const SizedBox(height: AppTheme.p32), // Extra padding at bottom
+                const SizedBox(height: AppTheme.p32),
               ],
             ),
           ),
@@ -229,21 +302,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildHeaderIcon(IconData icon, {bool hasBadge = false}) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.border),
-        boxShadow: const [AppTheme.softShadow],
+  Widget _buildHeaderIcon(IconData icon, {bool hasBadge = false, VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppTheme.border),
+          boxShadow: const [AppTheme.softShadow],
+        ),
+        child: hasBadge 
+          ? Badge(
+              backgroundColor: AppTheme.primary,
+              child: Icon(icon, color: AppTheme.textPrimary, size: 22),
+            )
+          : Icon(icon, color: AppTheme.textPrimary, size: 22),
       ),
-      child: hasBadge 
-        ? Badge(
-            backgroundColor: AppTheme.primary,
-            child: Icon(icon, color: AppTheme.textPrimary, size: 22),
-          )
-        : Icon(icon, color: AppTheme.textPrimary, size: 22),
     );
   }
 

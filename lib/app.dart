@@ -19,8 +19,8 @@ import 'screens/bookings/booking_detail_screen.dart';
 import 'screens/profile/profile_screen.dart';
 import 'screens/profile/edit_profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'screens/offers/offers_screen.dart';
+import 'screens/notifications/notifications_screen.dart';
 
 class App extends ConsumerWidget {
   const App({super.key});
@@ -51,6 +51,10 @@ class App extends ConsumerWidget {
         return null;
       },
       routes: [
+        GoRoute(
+          path: '/notifications',
+          builder: (context, state) => const NotificationsScreen(),
+        ),
         GoRoute(
           path: '/onboarding',
           builder: (context, state) => const OnboardingScreen(),
