@@ -114,7 +114,7 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
                           validator: Validators.validatePhone,
-                          prefixIcon: HugeIcons.strokeRoundedSmartphone02,
+                          prefixIcon: HugeIcons.strokeRoundedMobileNavigator01,
                         ),
                       ),
                     ],

@@ -61,7 +61,7 @@ class CategoryCard extends StatelessWidget {
     final n = name.toLowerCase();
     if (n.contains('clean')) return HugeIcons.strokeRoundedSparkles;
     if (n.contains('plumb')) return HugeIcons.strokeRoundedDroplet;
-    if (n.contains('electri')) return HugeIcons.strokeRoundedLightning02;
+    if (n.contains('electri')) return HugeIcons.strokeRoundedElectricPlugs;
     if (n.contains('beauty') || n.contains('salon') || n.contains('wellness')) return HugeIcons.strokeRoundedFlower;
     if (n.contains('repair') || n.contains('maintenance')) return HugeIcons.strokeRoundedSettings01;
     if (n.contains('paint')) return HugeIcons.strokeRoundedColorPicker;
