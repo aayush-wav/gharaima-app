@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/service_model.dart';
 import '../models/provider_model.dart';
-import 'categories_provider.dart';
+import 'booking_provider.dart';
 
 final servicesProvider = FutureProvider.family<List<ServiceModel>, int?>((ref, categoryId) async {
   final bookingService = ref.watch(bookingServiceProvider);
