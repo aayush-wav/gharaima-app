@@ -25,6 +25,7 @@ import 'screens/notifications/notifications_screen.dart';
 
 import 'package:hugeicons/hugeicons.dart';
 import 'widgets/glass_card.dart';
+import 'providers/theme_provider.dart';
 
 class App extends ConsumerWidget {
   const App({super.key});
@@ -199,11 +200,13 @@ class App extends ConsumerWidget {
       ],
     );
 
+    final themeMode = ref.watch(themeModeProvider);
+
     return MaterialApp.router(
       title: AppConfig.appName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
     );

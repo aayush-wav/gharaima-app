@@ -5,6 +5,7 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../widgets/glass_card.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -37,6 +38,7 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userProfile = ref.watch(userProfileProvider).value;
+    final themeMode  = ref.watch(themeModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColorsDark.primary : AppColors.primary;
 
@@ -110,6 +112,7 @@ class ProfileScreen extends ConsumerWidget {
                           _buildMenuRow(HugeIcons.strokeRoundedStar, 'Reviews & Ratings', () {}, isDark),
                           _buildMenuRow(HugeIcons.strokeRoundedShare01, 'Invite Friends', () {}, isDark),
                           _buildMenuRow(HugeIcons.strokeRoundedHelpCircle, 'Support Center', () {}, isDark),
+                          _buildThemeRow(context, ref, themeMode, isDark),
                         ],
                       ),
                     ),
@@ -159,6 +162,41 @@ class ProfileScreen extends ConsumerWidget {
         color: isDark ? AppColorsDark.textHint : AppColors.textHint,
         letterSpacing: 2.0,
       )
+    );
+  }
+
+  Widget _buildThemeRow(BuildContext context, WidgetRef ref, ThemeMode mode, bool isDark) {
+    final primary = isDark ? AppColorsDark.primary : AppColors.primary;
+    final textCol = isDark ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final hintCol = isDark ? AppColorsDark.textHint : AppColors.textHint;
+
+    final (icon, label) = switch (mode) {
+      ThemeMode.light  => (HugeIcons.strokeRoundedSun01,   'Light Mode'),
+      ThemeMode.dark   => (HugeIcons.strokeRoundedMoon01,  'Dark Mode'),
+      ThemeMode.system => (HugeIcons.strokeRoundedSmart,   'System Default'),
+    };
+
+    return InkWell(
+      onTap: () => ref.read(themeModeProvider.notifier).toggle(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Row(
+          children: [
+            HugeIcon(icon: icon, color: primary, size: 22),
+            const SizedBox(width: 16),
+            Text('Appearance', style: AppTextStyles.labelLarge.copyWith(color: textCol)),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppRadius.pill),
+              ),
+              child: Text(label, style: AppTextStyles.labelSmall.copyWith(color: primary, fontWeight: FontWeight.w700)),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

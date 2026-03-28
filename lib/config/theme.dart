@@ -103,14 +103,14 @@ class AppColorsDark {
 
 class AppTextStyles {
   // --- PART 1: TYPOGRAPHY ---
-  static TextStyle get displayLarge  => GoogleFonts.playfairDisplay(fontSize: 28, fontWeight: FontWeight.w700, height: 1.2);
-  static TextStyle get displayMedium => GoogleFonts.playfairDisplay(fontSize: 24, fontWeight: FontWeight.w700, height: 1.25);
-  static TextStyle get displaySmall  => GoogleFonts.playfairDisplay(fontSize: 20, fontWeight: FontWeight.w600, height: 1.3);
-  static TextStyle get headingLarge  => GoogleFonts.playfairDisplay(fontSize: 20, fontWeight: FontWeight.w700, height: 1.3);
-  static TextStyle get headingMedium => GoogleFonts.playfairDisplay(fontSize: 18, fontWeight: FontWeight.w600, height: 1.3);
-  static TextStyle get headingSmall  => GoogleFonts.playfairDisplay(fontSize: 16, fontWeight: FontWeight.w600, height: 1.35);
-  static TextStyle get priceText     => GoogleFonts.playfairDisplay(fontSize: 18, fontWeight: FontWeight.w700);
-  static TextStyle get priceLarge    => GoogleFonts.playfairDisplay(fontSize: 24, fontWeight: FontWeight.w700);
+  static TextStyle get displayLarge  => GoogleFonts.inter(fontSize: 28, fontWeight: FontWeight.w700, height: 1.2);
+  static TextStyle get displayMedium => GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w700, height: 1.25);
+  static TextStyle get displaySmall  => GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.w600, height: 1.3);
+  static TextStyle get headingLarge  => GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.w700, height: 1.3);
+  static TextStyle get headingMedium => GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600, height: 1.3);
+  static TextStyle get headingSmall  => GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, height: 1.35);
+  static TextStyle get priceText     => GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700);
+  static TextStyle get priceLarge    => GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w700);
 
   static TextStyle get bodyLarge => GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w400, height: 1.6);
   static TextStyle get bodyMedium => GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w400, height: 1.6);
